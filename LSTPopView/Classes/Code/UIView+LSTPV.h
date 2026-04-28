@@ -35,6 +35,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) CGSize pv_Size;
 
 
+UIWindow * _Nullable pv_ActiveWindow(void);
+UIInterfaceOrientation pv_InterfaceOrientation(void);
+API_AVAILABLE(ios(13.0)) UIWindowScene * _Nullable pv_ActiveWindowScene(void);
 /** 是否是苹果X系列(刘海屏系列) */
 BOOL pv_IsIphoneX_ALL(void);
 /** 屏幕大小 */

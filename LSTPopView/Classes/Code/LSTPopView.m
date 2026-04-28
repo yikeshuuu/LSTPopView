@@ -293,7 +293,7 @@ LSTPopViewManager *LSTPopViewM() {
     _infoView.frame = CGRectMake(pv_ScreenWidth()-70, pv_IsIphoneX_ALL()? 40:20, 60, 10);
     _infoView.layer.cornerRadius = 1;
     _infoView.layer.masksToBounds = YES;
-    UIView *superView = [UIApplication sharedApplication].keyWindow;
+    UIView *superView = pv_ActiveWindow();
     [superView addSubview:_infoView];
     return _infoView;
 }
@@ -462,7 +462,7 @@ static const NSTimeInterval LSTPopViewDefaultDuration = -1.0f;
     LSTPopView *popView = [[LSTPopView alloc] initWithFrame:popViewFrame];
     popView.backgroundColor = [UIColor clearColor];
 
-    popView.container = parentView? parentView : [UIApplication sharedApplication].keyWindow;
+    popView.container = parentView ? parentView : pv_ActiveWindow();
 
     popView.customView = customView;
     popView.backgroundView = [[LSTPopViewBgView alloc] initWithFrame:popView.bounds];
@@ -877,7 +877,7 @@ static const NSTimeInterval LSTPopViewDefaultDuration = -1.0f;
                         startTimer = YES;
                     } else {//隐藏显示
                         if (!self.parentView) {
-                            self.container = [UIApplication sharedApplication].keyWindow;
+                            self.container = pv_ActiveWindow();
                         }
                         [LSTPopViewManager savePopView:self];
                         return;
@@ -1158,7 +1158,7 @@ static const NSTimeInterval LSTPopViewDefaultDuration = -1.0f;
         case LSTDismissStyleCardDropToRight:
         {
             CGPoint startPosition = self.customView.layer.position;
-            BOOL isLandscape = UIInterfaceOrientationIsLandscape([UIApplication sharedApplication].statusBarOrientation);
+            BOOL isLandscape = UIInterfaceOrientationIsLandscape(pv_InterfaceOrientation());
             __block CGFloat rotateEndY = 0.0f;
             [UIView animateWithDuration:duration delay:0 usingSpringWithDamping:0.5 initialSpringVelocity:1.0 options:UIViewAnimationOptionCurveEaseIn animations:^{
                 if (dismissStyle == LSTDismissStyleCardDropToLeft) {
@@ -1572,7 +1572,8 @@ static const NSTimeInterval LSTPopViewDefaultDuration = -1.0f;
     // 获取手指的偏移量
     CGPoint transP = [panGestureRecognizer translationInView:self.customView];
 
-    CGPoint velocity = [panGestureRecognizer velocityInView:[UIApplication sharedApplication].keyWindow];
+    UIView *velocityView = pv_ActiveWindow() ?: self.container ?: self;
+    CGPoint velocity = [panGestureRecognizer velocityInView:velocityView];
     if(self.isDragScrollView) {//含有tableView,collectionView,scrollView
         //如果当前拖拽的是tableView
         if(self.scrollerView.contentOffset.y <= 0) {

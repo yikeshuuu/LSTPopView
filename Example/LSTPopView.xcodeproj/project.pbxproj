@@ -1183,6 +1183,7 @@
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = com.LSTPopView.www;
 				PRODUCT_NAME = LSTPopView;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
 				SWIFT_VERSION = 4.0;
 				WRAPPER_EXTENSION = app;
 			};
@@ -1202,6 +1203,7 @@
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = com.LSTPopView.www;
 				PRODUCT_NAME = LSTPopView;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
 				SWIFT_VERSION = 4.0;
 				WRAPPER_EXTENSION = app;
 			};

@@ -10,16 +10,19 @@
 #import "LSTPopViewVC.h"
 #import <LSTPopView.h>
 #import "LSTLaunchMutiPopViewVC.h"
+#if !TARGET_OS_SIMULATOR
 #import <Bugly/Bugly.h>
+#endif
 
 @implementation LSTAppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    
-    
-    [Bugly startWithAppId:@"a0b4f38d89"];
 
-  
+
+#if !TARGET_OS_SIMULATOR
+    [Bugly startWithAppId:@"a0b4f38d89"];
+#endif
+
 #ifdef DEBUG
     //测试开启调试log
     [LSTPopView setLogStyle:LSTPopViewLogStyleALL];

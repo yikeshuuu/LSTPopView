@@ -36,3 +36,7 @@ Carthage/Build
 #
 # Pods/
 Example/Pods
+
+
+# Claude Code
+.claude/settings.local.json

@@ -7,6 +7,87 @@
 
 #import "UIView+LSTPV.h"
 
+UIWindowScene * pv_ActiveWindowScene(void);
+
+static UIWindow *pv_PreferredWindowFromWindows(NSArray<UIWindow *> *windows) {
+    for (UIWindow *window in windows) {
+        if (window.isKeyWindow) {
+            return window;
+        }
+    }
+    for (UIWindow *window in windows) {
+        if (!window.hidden && window.alpha > 0.0 && window.windowLevel == UIWindowLevelNormal) {
+            return window;
+        }
+    }
+    return windows.firstObject;
+}
+
+UIWindow * pv_ActiveWindow(void) {
+    UIApplication *application = [UIApplication sharedApplication];
+    if (@available(iOS 13.0, *)) {
+        NSArray<UIScene *> *scenes = application.connectedScenes.allObjects;
+        for (UIScene *scene in scenes) {
+            if (![scene isKindOfClass:[UIWindowScene class]]) {
+                continue;
+            }
+            UIWindowScene *windowScene = (UIWindowScene *)scene;
+            if (windowScene.activationState != UISceneActivationStateForegroundActive) {
+                continue;
+            }
+            UIWindow *window = pv_PreferredWindowFromWindows(windowScene.windows);
+            if (window) {
+                return window;
+            }
+        }
+        for (UIScene *scene in scenes) {
+            if (![scene isKindOfClass:[UIWindowScene class]]) {
+                continue;
+            }
+            UIWindow *window = pv_PreferredWindowFromWindows(((UIWindowScene *)scene).windows);
+            if (window) {
+                return window;
+            }
+        }
+    }
+    return application.keyWindow;
+}
+
+UIInterfaceOrientation pv_InterfaceOrientation(void) {
+    if (@available(iOS 13.0, *)) {
+        UIWindowScene *windowScene = pv_ActiveWindowScene();
+        if (windowScene) {
+            return windowScene.interfaceOrientation;
+        }
+    }
+    return [UIApplication sharedApplication].statusBarOrientation;
+}
+
+UIWindowScene * pv_ActiveWindowScene(void) {
+    if (@available(iOS 13.0, *)) {
+        UIApplication *application = [UIApplication sharedApplication];
+        NSArray<UIScene *> *scenes = application.connectedScenes.allObjects;
+        for (UIScene *scene in scenes) {
+            if (![scene isKindOfClass:[UIWindowScene class]]) {
+                continue;
+            }
+            UIWindowScene *windowScene = (UIWindowScene *)scene;
+            if (windowScene.activationState != UISceneActivationStateForegroundActive) {
+                continue;
+            }
+            if (pv_PreferredWindowFromWindows(windowScene.windows)) {
+                return windowScene;
+            }
+        }
+        for (UIScene *scene in scenes) {
+            if ([scene isKindOfClass:[UIWindowScene class]]) {
+                return (UIWindowScene *)scene;
+            }
+        }
+    }
+    return nil;
+}
+
 @implementation UIView (LSTPV)
 
 
@@ -125,7 +206,8 @@
 BOOL pv_IsIphoneX_ALL(void) {
     BOOL isPhoneX = NO;
     if (@available(iOS 11.0, *)) {
-        isPhoneX = [[UIApplication sharedApplication] delegate].window.safeAreaInsets.bottom > 0.0;
+        UIWindow *window = pv_ActiveWindow();
+        isPhoneX = window.safeAreaInsets.bottom > 0.0;
     }
     return isPhoneX;
 }
